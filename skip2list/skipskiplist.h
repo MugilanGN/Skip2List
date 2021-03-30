@@ -29,6 +29,12 @@ typedef struct sl_entry {
     struct sl_entry * next[MAX_SKIPLIST_HEIGHT];
 } sl_entry;
 
+typedef struct guard_tree {
+    int* indices;
+    sl_entry** entries;
+    int length;
+} guard_tree;
+
 // Note: All of these functions copy the strings provided to avoid any internal
 // dangling pointers. You still own the pointers you pass in, and are 
 // responsible for managing that memory. Pointers returned to you point
@@ -39,5 +45,6 @@ void sl_destroy(sl_entry * head); // Frees the resources used by a list
 char * sl_get(sl_entry * head, int key); // Returns a key's value
 void sl_set(sl_entry * head, int key, char * value); // Sets a key's value
 void sl_unset(sl_entry * head, int key); // Removes a key, value pair
-sl_entry** sl_augment(sl_entry* head, int* q, int n, int m); // Returns list of guard entry pointers
+struct guard_tree* sl_augment(sl_entry* head, int* q, int n, int m); // Returns list of guard entry pointers
+char* sl_fast_get(guard_tree* head, int key);
 #endif

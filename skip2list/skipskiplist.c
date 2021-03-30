@@ -117,7 +117,7 @@ void sl_destroy(sl_entry * head) {
 
 // Returns an array containg the pointer to each guard entry after computing their
 // positions with the frequency array
-sl_entry** sl_augment(sl_entry* head, int* q, int n, int m) {
+struct guard_tree* sl_augment(sl_entry* head, int* q, int n, int m) {
     
     int* S = guard_optimizer(q, n, m);
     
@@ -144,18 +144,61 @@ sl_entry** sl_augment(sl_entry* head, int* q, int n, int m) {
     free(S);
     S = NULL;
     
-    return guards;
+    int* indices = (int*) malloc((m+2) * sizeof(int));
+    
+    for (int i = 0; i < m + 2; i++) {
+        indices[i] = guards[i]->key;
+    }
+    
+    struct guard_tree* tree;
+    tree->indices = indices;
+    tree->entries = guards;
+    tree->length = m + 2;
+    
+    return tree;
         
 }
 
-// Uses a binary tree to return the pointer to the closest guard entry
-// with a key value less than or equal to the searched key
-/*
-sl_entry* sl_guard_search(sl_entry* head, int key) {
+// Uses  binary search to find the closest guard entry.
+// It then uses a regular skiplist search to find the queried key.
 
+char* sl_fast_get(guard_tree* head, int key) {
+    
+    int exists = 0;
+    int m = 0;
+    
+    int l = 0;
+    int r = head->length;
+    
+    while (l <= r) {
+        m = l + ((r - l) / 2);
+        
+        if (head->indices[m] == key){
+            exists = 1;
+            break;
+        }
+  
+        if (head->indices[m] < key)
+            l = m + 1;
+  
+        else
+            r = m - 1;
+        
+    }
+    
+    if (exists == 1) {
+        return head->entries[m]->value;
+    } 
+    
+    else {
+        if (head->entries[m]->key > key){
+            return sl_get(head->entries[m-1], key);
+        }
+        return sl_get(head->entries[m], key);   
+    }
+    
 }
     
-*/
 
 // Searches for an entry by key in the skip list, and returns a copy of
 // the associated value, or NULL if the key was not found.

@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 #include "skipskiplist.h"
 
@@ -32,7 +33,7 @@ int* query_builder(int n) {
     
 }
 
-void query_test(sl_entry* list, int* q, int n) {
+void normal_test(sl_entry* list, int* q, int n) {
     
     // This is horrible design, but I'm not writing a function to 
     // randomly sample a generalized distribution
@@ -55,9 +56,32 @@ void query_test(sl_entry* list, int* q, int n) {
     
 }
 
+void tree_test(struct guard_tree* list, int* q, int n) {
+    
+    // This is horrible design, but I'm not writing a function to 
+    // randomly sample a generalized distribution
+    
+    for (int i = 0; i < n; i++) {
+                
+        int count = q[i];
+        
+        for (int j = 0; j < count; j++) {
+            
+            char* result = sl_fast_get(list, i);
+            free(result);
+            result = NULL;
+            
+        }
+        
+        printf("%d \n", i);
+        
+    }
+    
+}
+
 int main() {
     
-    int n = 10000;
+    int n = 100000;
     int m = 400;
     
     sl_entry* list = sl_init();
@@ -68,26 +92,33 @@ int main() {
     
     int* q = query_builder(n);
     
-    sl_entry** G = sl_augment(list, q, n, m);
+    struct guard_tree* tree = sl_augment(list, q, n, m);
     
-    for (int i = 0; i < m + 2; i++) {
+/*    for (int i = 0; i < m + 2; i++) {
         
-        printf("%p %d \n", (void*) G[i], G[i]->key);
+        printf("%p %d \n", (void*) tree->entries[i], tree->entries[i]->key);
         
+    }*/
+    
+/*    char* result = sl_fast_get(tree, 9999);
+    printf("%s", result);
+    free(result);
+    result = NULL;*/
+    
+    clock_t t;
+    t = clock();
+    
+    for (int i = 0; i < n; i++) {
+        char* result = sl_get(list, 90000);
+        free(result);
+        result = NULL;
+        printf("%d \n", i);
     }
     
+    t = clock() - t;
+    double time_taken = ((double)t)/CLOCKS_PER_SEC; // in seconds
+  
+    printf("%f", time_taken);
     
-/*    
-    int* q = query_builder(n);
-    int* S = guard_optimizer(q, n, m);
-    
-    print_array(S, m+2);
-    
-    free(q);
-    q = NULL;
-    
-    free(S);
-    S = NULL;
-*/
     return 0;
 }
