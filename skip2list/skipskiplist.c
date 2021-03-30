@@ -115,8 +115,12 @@ void sl_destroy(sl_entry * head) {
     }
 }
 
-// Returns an array containg the pointer to each guard entry after computing their
-// positions with the frequency array
+// Calculates the optimal guard entry positions with guard_optimizer.
+// Then it returns a guard_tree struct which contains
+//  (1) A sorted array containing the pointers to each of the m + 2 guard entries
+//  (2) Another sorted array containing the keys of each guard entry
+
+
 struct guard_tree* sl_augment(sl_entry* head, int* q, int n, int m) {
     
     int* S = guard_optimizer(q, n, m);
@@ -159,8 +163,8 @@ struct guard_tree* sl_augment(sl_entry* head, int* q, int n, int m) {
         
 }
 
-// Uses  binary search to find the closest guard entry.
-// It then uses a regular skiplist search to find the queried key.
+// Uses binary search on the guard entries to find the closest guard entry.
+// It then uses a regular sl_get skiplist search to find the queried key.
 
 char* sl_fast_get(guard_tree* head, int key) {
     
