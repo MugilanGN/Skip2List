@@ -3,7 +3,7 @@ from tqdm import tqdm
 import numpy as np
 import matplotlib.pyplot as plt
 import math
-import fenwick
+import fenwick_tree as fenwick
 import scipy.stats as stats
 
 def normal(x,mu,sigma):
