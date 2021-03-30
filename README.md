@@ -4,7 +4,7 @@ An augmented skiplist data structure that adapts to the probability distribution
 
 ## Why did you make this?
 
-Because I could ¯\_(ツ)_/¯.
+Because I could ¯\\_(ツ)_/¯.
 
 ## Will this help anyone?
 
