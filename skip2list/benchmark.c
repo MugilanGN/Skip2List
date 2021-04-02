@@ -1,5 +1,8 @@
+#define _USE_MATH_DEFINES
+
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 #include <time.h>
 
 #include "skipskiplist.h"
@@ -18,6 +21,11 @@ static void print_array(int *array, int size) {
     printf(" }\n");
 }
 
+// Gaussian distribution generator
+double normal(int x, int mu, int sigma) {
+    return pow(2 * M_PI * pow(sigma, 2), -0.5) * exp(-0.5 * pow(x - mu, 2) / pow(sigma, 2));
+}
+
 int* query_builder(int n) {
     
     int* q = (int*) malloc(sizeof(int) * n);
@@ -26,7 +34,7 @@ int* query_builder(int n) {
     // the frequency distribution of the skiplist
     
     for (int i = 0; i < n; i++) {
-        q[i] = 1 + (int) i/10000;
+        q[i] = (int) 500000*normal(i, n/2, n/8);
     }
     
     return q;
@@ -35,7 +43,7 @@ int* query_builder(int n) {
 
 // Both of these tests are horrible design, but I'm not writing functions to 
 // randomly sample a generalized distribution. That's a job for the wizards at
-// Numpy and Scipy
+// NumPy and SciPy
 
 double normal_test(sl_entry* list, int* q, int n) {
     clock_t t = clock();
@@ -58,9 +66,6 @@ double augmented_test(struct guard_tree* list, int* q, int n) {
     
     for (int i = 0; i < n; i++) {
         int count = q[i];
-        
-        // printf("%d \n", i);
-        
         for (int j = 0; j < count; j++) {
             char* result = sl_fast_get(list, i);
             //free(result);

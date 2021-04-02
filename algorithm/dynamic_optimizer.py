@@ -64,18 +64,20 @@ def g_optimize(q, m):
     
     return S
 
-n = 10000
-m = 40
+n = 100000
+m = 400
 
 #psycho piece-wise gaussian and linear distribution
-#q = [5000000*normal(i, n//2, n//8) for i in range(0, n)]
+q = [500000*normal(i, n//2, n//8) for i in range(0, n)]
 #q += [0.0000001*i for i in range(n//2, n)]
 #q = [20*(sin(i,0.0030)+1) for i in range(0, n)]
 #q = [(math.log(i+1)) for i in range(0, n)]
 #q = [i*(sin(i,0.004)+1) for i in range(0, n)]
-q = [i**2 for i in range(0, n)]
+#q = [i**2 for i in range(0, n)]
 
 #q = [i for i in range(0, n)]
+
+print(q[1000])
 
 #q[2000] += 1000
 #q[4000] += 1000
