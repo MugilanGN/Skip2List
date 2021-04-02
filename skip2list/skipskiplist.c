@@ -23,6 +23,9 @@ int grand (int max) {
     return result;
 }
 
+// The core part of the algorithm. It takes the frequency distribution
+// of the queries and outputs an array containing the guard entries.
+
 int* guard_optimizer(int* q, int n, int m) {
     
     m++;
@@ -58,12 +61,7 @@ int* guard_optimizer(int* q, int n, int m) {
             int l_freq = T[i-1];
             int r_freq = T[i];
             
-            /* 
-            considering using abs because I'm a total psycho who can't
-            help but micro optimize the most useless things.
-                
-            #BranchesBad?
-            */
+            // I could use abs here, but is my dignity worth it?
             
             if (l_freq > r_freq) {
                 T[i-1] -= q[S[i]-1];
@@ -87,7 +85,6 @@ int* guard_optimizer(int* q, int n, int m) {
     return S;
     
 }
-
 
 // Returns a sentinel node representing the head node of a new skip list.
 // Also seeds the random number generator the first time it is called.
@@ -121,7 +118,6 @@ void sl_destroy(sl_entry * head) {
 // Then it returns a guard_tree struct which contains
 //  (1) A sorted array containing the pointers to each of the m + 2 guard entries
 //  (2) Another sorted array containing the keys of each guard entry
-
 
 struct guard_tree* sl_augment(sl_entry* head, int* q, int n, int m) {
     
