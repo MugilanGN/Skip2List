@@ -1,9 +1,11 @@
 // (C) 2013 by Troy Deck; see LICENSE.txt for details
 
-#include "skipskiplist.h"
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 #include <time.h>
+
+#include "skipskiplist.h"
 
 int seeded = 0;
 
@@ -125,6 +127,11 @@ struct guard_tree* sl_augment(sl_entry* head, int* q, int n, int m) {
     
     int* S = guard_optimizer(q, n, m);
     
+    /*for (int i = 0; i < m+2; i++) {
+        printf("%d, ", S[i]);
+    }
+    printf("} \n");*/
+    
     sl_entry** guards = (sl_entry**) malloc((m+2) * sizeof(sl_entry*));
     
     sl_entry* curr = head;
@@ -155,6 +162,7 @@ struct guard_tree* sl_augment(sl_entry* head, int* q, int n, int m) {
     }
     
     struct guard_tree* tree;
+    
     tree->indices = indices;
     tree->entries = guards;
     tree->length = m + 2;
@@ -184,23 +192,21 @@ char* sl_fast_get(guard_tree* head, int key) {
   
         if (head->indices[m] < key)
             l = m + 1;
-  
         else
             r = m - 1;
-        
     }
     
     if (exists == 1) {
+        // printf("%d %s \n", key, head->entries[m]->value);
         return head->entries[m]->value;
     } 
-    
     else {
-        if (head->entries[m]->key > key){
+        if (head->entries[m]->key > key) {
             return sl_get(head->entries[m-1], key);
+        } else {
+            return sl_get(head->entries[m], key);
         }
-        return sl_get(head->entries[m], key);   
     }
-    
 }
     
 

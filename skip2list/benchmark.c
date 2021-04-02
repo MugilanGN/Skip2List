@@ -26,57 +26,50 @@ int* query_builder(int n) {
     // the frequency distribution of the skiplist
     
     for (int i = 0; i < n; i++) {
-        q[i] = i*i;
+        q[i] = 1 + (int) i/10000;
     }
     
     return q;
     
 }
 
-void normal_test(sl_entry* list, int* q, int n) {
-    
-    // This is horrible design, but I'm not writing a function to 
-    // randomly sample a generalized distribution
+// Both of these tests are horrible design, but I'm not writing functions to 
+// randomly sample a generalized distribution. That's a job for the wizards at
+// Numpy and Scipy
+
+double normal_test(sl_entry* list, int* q, int n) {
+    clock_t t = clock();
     
     for (int i = 0; i < n; i++) {
-                
         int count = q[i];
-        
         for (int j = 0; j < count; j++) {
-            
             char* result = sl_get(list, i);
-            free(result);
-            result = NULL;
-            
+            //free(result);
+            result = NULL;  
         }
-        
-        printf("%d \n", i);
-        
     }
     
+    t = clock() - t;
+    return ((double) t)/CLOCKS_PER_SEC;
 }
 
-void tree_test(struct guard_tree* list, int* q, int n) {
-    
-    // This is horrible design, but I'm not writing a function to 
-    // randomly sample a generalized distribution
+double augmented_test(struct guard_tree* list, int* q, int n) {
+    clock_t t = clock();
     
     for (int i = 0; i < n; i++) {
-                
         int count = q[i];
         
+        // printf("%d \n", i);
+        
         for (int j = 0; j < count; j++) {
-            
             char* result = sl_fast_get(list, i);
-            free(result);
+            //free(result);
             result = NULL;
-            
         }
-        
-        printf("%d \n", i);
-        
     }
     
+    t = clock() - t;
+    return ((double) t)/CLOCKS_PER_SEC;
 }
 
 int main() {
@@ -92,33 +85,13 @@ int main() {
     
     int* q = query_builder(n);
     
+    // BEGIN BENCHMARKS
+
+    printf("Normal time taken: %fs \n", normal_test(list, q, n));
+        
     struct guard_tree* tree = sl_augment(list, q, n, m);
-    
-/*    for (int i = 0; i < m + 2; i++) {
-        
-        printf("%p %d \n", (void*) tree->entries[i], tree->entries[i]->key);
-        
-    }*/
-    
-/*    char* result = sl_fast_get(tree, 9999);
-    printf("%s", result);
-    free(result);
-    result = NULL;*/
-    
-    clock_t t;
-    t = clock();
-    
-    for (int i = 0; i < n; i++) {
-        char* result = sl_get(list, 90000);
-        free(result);
-        result = NULL;
-        printf("%d \n", i);
-    }
-    
-    t = clock() - t;
-    double time_taken = ((double)t)/CLOCKS_PER_SEC; // in seconds
-  
-    printf("%f", time_taken);
+
+    printf("Augmented time taken: %fs \n", augmented_test(tree, q, n));
     
     return 0;
 }
