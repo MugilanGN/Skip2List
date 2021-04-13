@@ -80,7 +80,7 @@ int* guard_optimizer(int* q, int n, int m) {
     // i'm a memory management god
     free(T);
     T = NULL;
-    
+
     return S;
     
 }
