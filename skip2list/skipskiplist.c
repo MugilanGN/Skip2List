@@ -28,21 +28,20 @@ int grand (int max) {
 
 int* guard_optimizer(int* q, int n, int m) {
     
-    m++;
     int a = 0;
     int C = 1;
     
     // Stores the guard entry indices
-    int* S = (int*) malloc(sizeof(int)*(m+1));
+    int* S = (int*) malloc(sizeof(int)*(m+2));
     
-    for (int i = 0; i < m + 1; i++) {
-        S[i] = (n*i)/m;
+    for (int i = 0; i < m + 2; i++) {
+        S[i] = (n*i)/(m+1);
     }
     
     // Temporary dynamic programming array to store relative frequencies
-    int* T = (int*) malloc(sizeof(int)*m);
+    int* T = (int*) malloc(sizeof(int)*(m+1));
     
-    for (int i = 1; i < m + 1; i++) {
+    for (int i = 1; i < m + 2; i++) {
         int freq = 0;
         for(int j = S[i-1]; j < S[i]+a; j++) {
             freq += q[j];
@@ -52,7 +51,7 @@ int* guard_optimizer(int* q, int n, int m) {
     
     for (int k = 0; k < n; k++) {
         
-        for (int i = 1; i < m; i++) {
+        for (int i = 1; i < m + 1; i++) {
             
             if ((S[i] - S[i-1]) <= C || (S[i+1]-S[i]) <= C) {
                 continue;
@@ -120,49 +119,42 @@ void sl_destroy(sl_entry * head) {
 //  (2) Another sorted array containing the keys of each guard entry
 
 struct guard_tree* sl_augment(sl_entry* head, int* q, int n, int m) {
-    
+
     int* S = guard_optimizer(q, n, m);
+
+    // int* S = (int*) malloc(sizeof(int)*(m+2));
     
-    /*for (int i = 0; i < m+2; i++) {
-        printf("%d, ", S[i]);
-    }
-    printf("} \n");*/
-    
+    // for (int i = 0; i < m + 2; i++) {
+    //     S[i] = (n*i)/(m+1);
+    // }
+
     sl_entry** guards = (sl_entry**) malloc((m+2) * sizeof(sl_entry*));
-    
+    int* indices = (int*) malloc((m+2) * sizeof(int));
+
     sl_entry* curr = head;
     int level = 0;
-    
     int i = 0;
     int j = 0;
     
     while (j < m + 2) {
-        
         if (i == S[j]) {
             guards[j] = curr;
+            indices[j] = curr->key;
             j++;
         }
-        
         i++;
         curr = curr->next[level];
-        
     }
-    
+
     free(S);
     S = NULL;
-    
-    int* indices = (int*) malloc((m+2) * sizeof(int));
-    
-    for (int i = 0; i < m + 2; i++) {
-        indices[i] = guards[i]->key;
-    }
-    
-    struct guard_tree* tree;
-    
+
+    struct guard_tree* tree = (guard_tree*) malloc(sizeof(guard_tree));
+
     tree->indices = indices;
     tree->entries = guards;
     tree->length = m + 2;
-    
+
     return tree;
         
 }
@@ -172,18 +164,15 @@ struct guard_tree* sl_augment(sl_entry* head, int* q, int n, int m) {
 
 char* sl_fast_get(guard_tree* head, int key) {
     
-    int exists = 0;
-    int m = 0;
-    
     int l = 0;
+    int m = 0;
     int r = head->length;
     
     while (l <= r) {
         m = l + ((r - l) / 2);
         
         if (head->indices[m] == key){
-            exists = 1;
-            break;
+            return head->entries[m]->value;
         }
   
         if (head->indices[m] < key)
@@ -192,17 +181,11 @@ char* sl_fast_get(guard_tree* head, int key) {
             r = m - 1;
     }
     
-    if (exists == 1) {
-        // printf("%d %s \n", key, head->entries[m]->value);
-        return head->entries[m]->value;
-    } 
-    else {
-        if (head->entries[m]->key > key) {
-            return sl_get(head->entries[m-1], key);
-        } else {
-            return sl_get(head->entries[m], key);
-        }
-    }
+    if (head->entries[m]->key > key)
+        return sl_get(head->entries[m-1], key);
+    else
+        return sl_get(head->entries[m], key);
+
 }
     
 

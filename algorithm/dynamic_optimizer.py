@@ -1,5 +1,6 @@
 import random
 from tqdm import tqdm
+import time
 import numpy as np
 import matplotlib.pyplot as plt
 import math
@@ -29,6 +30,14 @@ def g_optimize(q, m):
     T = []
     # The ith index represents the frequency sum on the left of
     # the ith guard entry (from guard 1 to m)
+    
+        
+    plt.figure()
+    plot, = plt.plot([],[])
+    plt.xlim(0, (m-1)*n//m)
+    plot.set_xdata([i*n//m for i in range(0,m)])
+    q_max = max(q)
+    plt.ylim(0, q_max)
     
     for i in range(1, m+1):
         
@@ -62,15 +71,21 @@ def g_optimize(q, m):
                 
                 S[i] += C
     
+        if not k % 25:
+            spacing_list = [(S[i] - S[i-1]) for i in range(1, m+1)]
+            plot.set_ydata(spacing_list)
+            plt.draw()
+            plt.pause(0.01)
+    
     return S
 
-n = 100000
-m = 400
+n = 10000
+m = 40
 
 #psycho piece-wise gaussian and linear distribution
-q = [500000*normal(i, n//2, n//8) for i in range(0, n)]
+#q = [500000*normal(i, n//2, n//8) for i in range(0, n)]
 #q += [0.0000001*i for i in range(n//2, n)]
-#q = [20*(sin(i,0.0030)+1) for i in range(0, n)]
+q = [i*0.01*20*(sin(i,0.0030)+1) for i in range(0, n)]
 #q = [(math.log(i+1)) for i in range(0, n)]
 #q = [i*(sin(i,0.004)+1) for i in range(0, n)]
 #q = [i**2 for i in range(0, n)]
@@ -88,27 +103,19 @@ q = [int(x) for x in q]
 plt.plot([i for i in range(0,n)],q)
 plt.show()
 
-plt.figure()
-
 S = g_optimize(q,m)
 
-spacing_list = []
-for i in range(1, len(S)):
-    spacing_list.append(S[i] - S[i-1])
+spacing_list = [S[i] - S[i-1] for i in range(1, m+1)]
 
 maximum = max(spacing_list)
 
-for i in range(0, len(S)-1):
-    spacing_list[i] = maximum - spacing_list[i]
+q = [int(x) for x in q]
 
-
-    
+plt.plot([i for i in range(0,n)],q)
+plt.ylim(0,max(max(q)+50, maximum))
+plt.show()
+   
 print("\n")
 print(S)
 print("\n")
-print(spacing_list)
-
-plt.plot([i for i in range(0,n)],q)
-plt.figure()
-plt.plot([i*n//m for i in range(1,m+2)],spacing_list)
-plt.show()
+print(spacing_list, maximum)
