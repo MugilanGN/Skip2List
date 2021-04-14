@@ -120,13 +120,13 @@ void sl_destroy(sl_entry * head) {
 
 struct guard_tree* sl_augment(sl_entry* head, int* q, int n, int m) {
 
-    int* S = guard_optimizer(q, n, m);
+    // int* S = guard_optimizer(q, n, m);
 
-    // int* S = (int*) malloc(sizeof(int)*(m+2));
+    int* S = (int*) malloc(sizeof(int)*(m+2));
     
-    // for (int i = 0; i < m + 2; i++) {
-    //     S[i] = (n*i)/(m+1);
-    // }
+    for (int i = 0; i < m + 2; i++) {
+        S[i] = (n*i)/(m+1);
+    }
 
     sl_entry** guards = (sl_entry**) malloc((m+2) * sizeof(sl_entry*));
     int* indices = (int*) malloc((m+2) * sizeof(int));
@@ -162,29 +162,29 @@ struct guard_tree* sl_augment(sl_entry* head, int* q, int n, int m) {
 // Uses binary search on the guard entries to find the closest guard entry.
 // It then uses a regular sl_get skiplist search to find the queried key.
 
-char* sl_fast_get(guard_tree* head, int key) {
+char* sl_fast_get(guard_tree* tree, int key) {
     
     int l = 0;
     int m = 0;
-    int r = head->length;
+    int r = tree->length;
     
     while (l <= r) {
         m = l + ((r - l) / 2);
         
-        if (head->indices[m] == key){
-            return head->entries[m]->value;
+        if (tree->indices[m] == key){
+            return tree->entries[m]->value;
         }
   
-        if (head->indices[m] < key)
+        if (tree->indices[m] < key)
             l = m + 1;
         else
             r = m - 1;
     }
     
-    if (head->entries[m]->key > key)
-        return sl_get(head->entries[m-1], key);
+    if (tree->entries[m]->key > key)
+        return sl_get(tree->entries[m-1], key);
     else
-        return sl_get(head->entries[m], key);
+        return sl_get(tree->entries[m], key);
 
 }
     

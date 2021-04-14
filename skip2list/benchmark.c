@@ -66,8 +66,12 @@ double normal_test(sl_entry* list, int* q, int n, int iter) {
 
 double augmented_test(struct guard_tree* list, int* q, int n, int iter) {
     clock_t t = clock();
-    
+    double t_sum = 0;
+
     for (int k = 0; k < iter; k++){
+
+        clock_t t = clock();
+
         for (int i = 0; i < n; i++) {
             int count = q[i];
             for (int j = 0; j < count; j++) {
@@ -76,10 +80,12 @@ double augmented_test(struct guard_tree* list, int* q, int n, int iter) {
                 result = NULL;
             }
         }
+
+        t_sum += ((double) (clock() - t))/(CLOCKS_PER_SEC);
+
     }
-    
-    t = clock() - t;
-    return ((double) t)/(CLOCKS_PER_SEC * iter);
+
+    return t_sum/iter;
 }
 
 int main() {
@@ -97,11 +103,11 @@ int main() {
     }
     
     int* q = query_builder(n);
-    int iter = 1;
+    int iter = 5;
 
     // BEGIN BENCHMARKS
 
-    printf("Normal time taken: %fs \n", normal_test(list, q, n, iter));
+    // printf("Normal time taken: %fs \n", normal_test(list, q, n, iter));
 
     struct guard_tree* tree = sl_augment(list, q, n, m);
 
