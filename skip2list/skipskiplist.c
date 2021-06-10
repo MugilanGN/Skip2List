@@ -120,12 +120,12 @@ void sl_destroy(sl_entry * head) {
 
 struct guard_tree* sl_augment(sl_entry* head, int* q, int n, int m) {
 
-    // int* S = guard_optimizer(q, n, m);
+    //int* S = guard_optimizer(q, n, m);
 
     int* S = (int*) malloc(sizeof(int)*(m+2));
     
     for (int i = 0; i < m + 2; i++) {
-        S[i] = (n*i)/(m+1);
+         S[i] = (n*i)/(m+1);
     }
 
     sl_entry** guards = (sl_entry**) malloc((m+2) * sizeof(sl_entry*));
