@@ -4,7 +4,7 @@ import time
 import numpy as np
 import matplotlib.pyplot as plt
 import math
-import fenwick_tree as fenwick
+from . import fenwick_tree as fenwick
 import scipy.stats as stats
 
 def normal(x,mu,sigma):

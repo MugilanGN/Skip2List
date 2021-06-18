@@ -3,7 +3,7 @@ from tqdm import tqdm
 import numpy as np
 import matplotlib.pyplot as plt
 import math
-import fenwick_tree as fenwick
+import .fenwick_tree as fenwick
 
 def normal(x,mu,sigma):
     return ( 2.*np.pi*sigma**2. )**-.5 * np.exp( -.5 * (x-mu)**2. / sigma**2. )
